@@ -8,9 +8,11 @@ start(Nodes) ->
 stop(Logger) ->
   Logger ! stop.
 
+%initialisiert den Loop
 init(_) ->
   loop().
 
+% ankommende Nachrichten/Logs werden an die log()-Methode weitergegeben
 loop() ->
   receive {log, From, Time, Msg} ->
       log(From, Time, Msg),
@@ -19,5 +21,6 @@ loop() ->
       ok
 end.
 
+% gibt die Nachrichten/Logs auf dem Standard-Output aus (Konsole)
 log(From, Time, Msg) ->
   io:format("log: ~w ~w ~p~n", [Time, From, Msg]).

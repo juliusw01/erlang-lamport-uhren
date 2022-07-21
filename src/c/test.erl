@@ -2,6 +2,7 @@
 
 -export([run/2]).
 
+% test-Methode, um zu überprüfen, dass das Programm funktioniert
 run(Sleep, Jitter) ->
     Log = mylogger:start([einstein, euler, curie, turing]),
     A = worker:start(einstein, Log, Sleep, Jitter),
