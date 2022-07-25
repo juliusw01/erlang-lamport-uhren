@@ -13,9 +13,6 @@ inc(T) ->
 merge(Ti, Tj) -> 
     if
         Ti > Tj -> Ti;
-
-        Tj > Ti -> Tj;
-            
         true -> Tj
             
     end.
