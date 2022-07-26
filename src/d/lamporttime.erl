@@ -1,6 +1,6 @@
 -module(lamporttime).
 
--export([zero/0, inc/1, merge/2, leq/2, startClocks/1, update/3, canLog/1]).
+-export([zero/0, inc/1, merge/2, leq/2, startClocks/1, updateLamportTime/3, lowestLamportTime/1]).
 
 zero() ->
   0.
@@ -17,8 +17,11 @@ merge(Ti, Tj) ->
 leq(Ti, Tj) ->
   Ti =< Tj.
 
-startClocks(Nodes) -> lists:foldl(fun(Node, Clocks) -> [{Node, zero()} | Clocks] end, [], Nodes).
+%Die Uhrenverwaltung wird gestartet/initialisiert. Alle Worker werden mit ihrem Zeitstempel gespeichert.
+startClocks(Nodes) -> lists:foldl(fun(Node, LamportClocks) -> [{Node, zero()} | LamportClocks] end, [], Nodes).
 
-canLog(Clocks) -> element(2, hd(lists:keysort(2, Clocks))).
+%Gibt die niedrigste Lamportzeit zurück
+lowestLamportTime(LamportClocks) -> element(2, hd(lists:keysort(2, LamportClocks))).
 
-update(Node, Time, Clocks) -> lists:keyreplace(Node, 1, Clocks, {Node, Time}).
+%Es wird nach dem richtigen Element in der Uhrenverwaltung gesucht, dessen Zeitstempel wird dann aktualisiert
+updateLamportTime(Node, Time, LamportClocks) -> lists:keyreplace(Node, 1, LamportClocks, {Node, Time}).

@@ -14,8 +14,10 @@ init(_) ->
 
 % ankommende Nachrichten/Logs werden an die log()-Methode weitergegeben
 loop() ->
+  %Nachricht wird empfangen
   receive {log, From, Time, Msg} ->
       log(From, Time, Msg),
+      %Methode ruft sich selbst wieder auf
       loop();
     stop ->
       ok

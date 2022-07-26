@@ -19,25 +19,25 @@ end.
 peers(Wrk, Peers) ->
   Wrk ! {peers, Peers}.
 
-loop(Name, Log, Peers, Sleep, Jitter, LocalTime) ->
+loop(Name, Log, Peers, Sleep, Jitter, Lamporttime) ->
   Wait = rand:uniform(Sleep),
   receive
     {msg, Time, Msg} ->
-      NewLocalTime = lamporttime:inc(lamporttime:merge(Time, LocalTime)),
-      Log ! {log, Name, NewLocalTime, {received, Msg}},
-      loop(Name, Log, Peers, Sleep, Jitter, NewLocalTime);
+      NewLamporttime = lamporttime:inc(lamporttime:merge(Time, Lamporttime)),
+      Log ! {log, Name, NewLamporttime, {received, Msg}},
+      loop(Name, Log, Peers, Sleep, Jitter, NewLamporttime);
     stop ->
           ok;
     Error ->
       Log ! {log, Name, time, {error, Error}}
     after Wait ->
       Selected = select(Peers),
-      NewLocalTime = lamporttime:inc(LocalTime),
+      NewLamporttime = lamporttime:inc(Lamporttime),
       Message = {hello, rand:uniform(100)},
-      Selected ! {msg, NewLocalTime, Message},
+      Selected ! {msg, NewLamporttime, Message},
       jitter(Jitter),
-        Log ! {log, Name, NewLocalTime, {sending, Message}},
-        loop(Name, Log, Peers, Sleep, Jitter, NewLocalTime)
+        Log ! {log, Name, NewLamporttime, {sending, Message}},
+        loop(Name, Log, Peers, Sleep, Jitter, NewLamporttime)
 end.
 
 select(Peers) ->
